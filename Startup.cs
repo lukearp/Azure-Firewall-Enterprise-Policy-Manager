@@ -47,6 +47,8 @@ namespace Azure_Firewall_Enterprise_Policy_Manager
             services.AddServerSideBlazor()
                 .AddMicrosoftIdentityConsentHandler();
             services.AddSingleton<WeatherForecastService>();
+            services.AddSingleton<FirewallRuleService>();
+            services.AddSingleton<IFirewallConfigManager, FirewallConfigManager>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

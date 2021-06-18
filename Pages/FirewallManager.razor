@@ -1,0 +1,37 @@
+@page "/firewall"
+
+@using Azure_Firewall_Enterprise_Policy_Manager.Data
+@inject FirewallRuleService FirewallService
+
+@if(rules == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>                
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var rule in rules)
+            {
+                <tr>
+                    <td>@rule.name</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+
+@code {
+    private FirewallRules[] rules;
+
+    protected override async Task OnInitializedAsync()
+    {
+        rules = await FirewallService.GetRules();
+    }
+}
