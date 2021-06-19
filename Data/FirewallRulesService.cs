@@ -2,34 +2,39 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.Azure.Management.ResourceManager.Fluent;
-using Microsoft.Azure.Management.Fluent;
-using Microsoft.Azure.Management.ResourceManager.Fluent.Core;
-using Microsoft.Azure.Management.ResourceManager.Fluent.Authentication;
+using Microsoft.IdentityModel.Clients.ActiveDirectory;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
 
 namespace Azure_Firewall_Enterprise_Policy_Manager.Data
 {
     public class FirewallRuleService 
     {
         private readonly IFirewallConfigManager _configuration;
-        private IAzure azure;
+        private string accessToken;
+        private string startUri;
+        private string firewallPolicyApiVersion = "2021-02-01";
 
         public FirewallRuleService(IFirewallConfigManager configuration)
         {
-            this._configuration = configuration;
-            var creds = new Microsoft.Azure.Management.ResourceManager.Fluent.Authentication.AzureCredentialsFactory().FromServicePrincipal(this._configuration.ClientId, this._configuration.ClientSecret, this._configuration.TenantId, AzureEnvironment.AzureGlobalCloud);
-            azure = Microsoft.Azure.Management.Fluent.Azure.Authenticate(creds).WithDefaultSubscription();
+            this._configuration = configuration;            
+            this.startUri = "/subscriptions/"+ this._configuration.SubscriptionId +"/resourceGroups/" + this._configuration.ResourceGroup + "/providers/Microsoft.Network/";
+            GetAuthorizationToken();
         }
-        public async Task<FirewallRules[]> GetRules()
+        public async Task<string> GetFirewallPolicy()
+        {          
+            return await FirewallHttp.GetHttp(accessToken,startUri + "firewallPolicies?api-version=" + firewallPolicyApiVersion);
+        }
+        private void GetAuthorizationToken()
         {
-            var creds = new Microsoft.Azure.Management.ResourceManager.Fluent.Authentication.AzureCredentialsFactory().FromServicePrincipal(this._configuration.ClientId, this._configuration.ClientSecret, this._configuration.TenantId, AzureEnvironment.AzureGlobalCloud);
-            List<FirewallRules> rules = new List<FirewallRules>();
-            IPagedCollection<IResourceGroup> groups = await azure.ResourceGroups.ListAsync();
-            foreach(IResourceGroup group in groups)
+            ClientCredential cc = new ClientCredential(this._configuration.ClientId, this._configuration.ClientSecret);
+            var context = new AuthenticationContext("https://login.microsoftonline.com/" + this._configuration.TenantId);
+            var result = context.AcquireTokenAsync("https://management.azure.com/", cc);
+            if (result == null)
             {
-               rules.Add(new FirewallRules() { name = group.Name });
+                throw new InvalidOperationException("Failed to obtain the Access token");
             }
-            return rules.ToArray();
+            accessToken = result.Result.AccessToken;
         }
     }
 }

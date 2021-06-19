@@ -10,6 +10,8 @@ namespace Azure_Firewall_Enterprise_Policy_Manager.Data
         string TenantId {get;}
         string ClientId {get;}
         string ClientSecret {get;}
+        string SubscriptionId {get;}
+        string ResourceGroup {get;}
         string CallbackPath {get;}
         IConfigurationSection GetConfigurationSection(string Key);
     }
@@ -54,6 +56,20 @@ namespace Azure_Firewall_Enterprise_Policy_Manager.Data
             get
             {
                 return this._configuration["AzureAd:ClientSecret"];
+            }
+        }
+        public string SubscriptionId
+        {
+            get
+            {
+                return this._configuration["AzureAd:SubscriptionId"];
+            }
+        }
+        public string ResourceGroup
+        {
+            get
+            {
+                return this._configuration["AzureAd:ResourceGroup"];
             }
         }
         public string CallbackPath

@@ -1,9 +1,10 @@
 @page "/firewall"
 
 @using Azure_Firewall_Enterprise_Policy_Manager.Data
+@using Newtonsoft.Json.Linq
 @inject FirewallRuleService FirewallService
 
-@if(rules == null)
+@if(policy == null)
 {
     <p><em>Loading...</em></p>
 }
@@ -15,23 +16,21 @@ else
                 <th>Name</th>                
             </tr>
         </thead>
-        <tbody>
-            @foreach (var rule in rules)
-            {
+        <tbody>            
                 <tr>
-                    <td>@rule.name</td>
+                    <td>@policy</td>
                 </tr>
-            }
         </tbody>
     </table>
 }
 
 
 @code {
-    private FirewallRules[] rules;
+    private JObject policy;
 
     protected override async Task OnInitializedAsync()
     {
-        rules = await FirewallService.GetRules();
+        string stringPolicy = await FirewallService.GetFirewallPolicy();
+        policy = JObject.Parse(stringPolicy);
     }
 }
