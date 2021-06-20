@@ -1,0 +1,99 @@
+@page "/rules"
+
+@using Azure_Firewall_Enterprise_Policy_Manager.Data
+@using Newtonsoft.Json.Linq
+@using System.Collections.Generic
+@inject FirewallRuleService FirewallService
+
+@if (networkRule == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <h1>Rules</h1>
+    <nav>
+        <div class="nav nav-tabs" id="nav-tab" role="tablist">
+            <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab"
+            aria-controls="nav-home" aria-selected="true">Network</a>
+            <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab"
+            aria-controls="nav-profile" aria-selected="false">Application</a>
+            <a class="nav-item nav-link" id="nav-contact-tab" data-toggle="tab" href="#nav-contact" role="tab"
+            aria-controls="nav-contact" aria-selected="false">DNANT</a>
+        </div>
+    </nav>
+    <div class="tab-content" id="nav-tabContent">
+        <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+            <button class="btn btn-primary" @onclick="AddNetRule">Add Network Rule</button>
+            @foreach (string p in networkRule)
+            {
+                <div class="card">
+                    <div class="card-body">
+                        <p>@p</p>
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+            <button class="btn btn-primary" @onclick="AddAppRule">Add Application Rule</button>
+            @foreach (string a in appRule)
+            {
+                <div class="card">
+                    <div class="card-body">
+                        <p>@a</p>
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">
+            <button class="btn btn-primary" @onclick="AdddNatRule">Add Desination Nat Rule</button>            
+            @foreach (string d in dnatRule)
+            {
+                <div class="card">
+                    <div class="card-body">
+                        <p>@d</p>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}
+
+
+@code {
+    private List<string> networkRule;
+    private List<string> appRule;
+    private List<string> dnatRule;
+    private int networkRulecount;
+    private int appRulecount;
+    private int dNatRulecount;
+
+    protected override async Task OnInitializedAsync()
+    {
+        //string stringPolicy = await FirewallService.GetFirewallPolicy();
+        networkRule = new List<string>() { "First", "Second" }; //JObject.Parse(stringPolicy);
+        appRule = new List<string>() { "App1", "App2" }; //JObject.Parse(stringPolicy);
+        dnatRule = new List<string>() { "dnat1", "dnat2" }; //JObject.Parse(stringPolicy);
+
+        networkRulecount = appRulecount = dNatRulecount = 1;
+    }
+
+    private void AddNetRule()
+    {
+        networkRule.Add("Another" + networkRulecount.ToString());
+        networkRulecount++;
+        StateHasChanged();
+    }
+    private void AddAppRule()
+    {
+        appRule.Add("App" + appRulecount.ToString());
+        appRulecount++;
+        StateHasChanged();
+    }
+    private void AdddNatRule()
+    {
+        dnatRule.Add("Nat" + dNatRulecount.ToString());
+        dNatRulecount++;
+        StateHasChanged();
+    }
+}
