@@ -1,3 +1,63 @@
 @page "/objects"
+@using Azure_Firewall_Enterprise_Policy_Manager.Data
+@using System.Collections.Generic
+@inject FirewallObjectsService ObjectService
 
-<p>Coming Soon</p>
+@if(firewallObjects == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <nav>
+        <div class="nav nav-tabs" id="nav-tab" role="tablist">
+            <a class="nav-item nav-link active" id="nav-object-tab" data-toggle="tab" href="#nav-object" role="tab"
+            aria-controls="nav-object" aria-selected="true">Objects</a>
+            <a class="nav-item nav-link" id="nav-objectGroup-tab" data-toggle="tab" href="#nav-objectGroup" role="tab"
+            aria-controls="nav-objectGroup" aria-selected="false">Object Groups</a>
+        </div>
+    </nav>
+    <div class="tab-content" id="nav-tabContent">
+        <div class="tab-pane fade show active" id="nav-object" role="tabpanel" aria-labelledby="nav-object-tab">
+            <button class="btn btn-primary" @onclick="AddObject">Add Network Object</button>
+            @foreach (FirewallObject p in firewallObjects.firewallObjects)
+            {
+                <div class="card">
+                    <div class="card-body">
+                        <p>@p.ToString()</p>
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="tab-pane fade" id="nav-objectGroup" role="tabpanel" aria-labelledby="nav-objectGroup-tab">
+            <button class="btn btn-primary" @onclick="AddObjectGroup">Add Application Rule</button>
+            @foreach (FirewallObjectGroup a in firewallObjects.firewallObjectGroups)
+            {
+                <div class="card">
+                    <div class="card-body">
+                        <p>@a.ToString()</p>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}
+
+@code {
+    private FirewallObjectsService firewallObjects;
+
+    protected override async Task OnInitializedAsync()
+    {
+        firewallObjects = new FirewallObjectsService();
+    }
+
+    private void AddObject()
+    {
+        //to-do Add Objects
+    }
+
+    private void AddObjectGroup()
+    {
+        //to-do Add Object Group
+    }
+}

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace Azure_Firewall_Enterprise_Policy_Manager.Data
 {
@@ -15,6 +16,11 @@ namespace Azure_Firewall_Enterprise_Policy_Manager.Data
         public string network {get;set;}
         public string description {get;set;}
         public FirewallObjectReference references {get;set;}
+
+        public override string ToString()
+        {
+            return JsonConvert.SerializeObject(this);
+        }
     }
 
     public class FirewallObjectGroup
@@ -23,5 +29,10 @@ namespace Azure_Firewall_Enterprise_Policy_Manager.Data
         public List<FirewallObject> firewallObjects {get;set;}
         public string description {get;set;}
         public FirewallObjectReference references {get;set;}
+        
+        public override string ToString()
+        {
+            return JsonConvert.SerializeObject(this);
+        }
     }
 }

@@ -49,6 +49,7 @@ namespace Azure_Firewall_Enterprise_Policy_Manager
             services.AddSingleton<WeatherForecastService>();
             services.AddSingleton<FirewallRuleService>();
             services.AddSingleton<IFirewallConfigManager, FirewallConfigManager>();
+            services.AddSingleton<FirewallObjectsService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
