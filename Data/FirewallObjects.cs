@@ -7,7 +7,7 @@ namespace Azure_Firewall_Enterprise_Policy_Manager.Data
     public class FirewallObjectReference
     {
         public List<FirewallObjectGroup> firewallObjectGroups {get;set;}
-        public List<FirewallRules> firewallRules {get;set;}
+        public List<FirewallRule> firewallRules {get;set;}
     }
 
     public class FirewallObject

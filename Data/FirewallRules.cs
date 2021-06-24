@@ -1,5 +1,6 @@
 using System;
 using Microsoft.Extensions.Configuration;
+using System.Collections.Generic;
 
 namespace Azure_Firewall_Enterprise_Policy_Manager.Data
 {
@@ -85,8 +86,14 @@ namespace Azure_Firewall_Enterprise_Policy_Manager.Data
         }
     }
 
-    public class FirewallRules 
+    public class FirewallRule
     {
         public string name {get;set;}
+        public string description {get;set;}
+        public List<FirewallObject> sourceObjects {get;set;}
+        public List<FirewallObjectGroup> sourceObjectGroups {get;set;}
+        public List<FirewallObject> destinationObjects {get;set;}
+        public List<FirewallObjectGroup> destinationObjectGroups {get;set;} 
+        public List<FirewallProtocol> services {get;set;}       
     }
 }

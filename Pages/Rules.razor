@@ -3,7 +3,7 @@
 @using Azure_Firewall_Enterprise_Policy_Manager.Data
 @using Newtonsoft.Json.Linq
 @using System.Collections.Generic
-@inject FirewallRuleService FirewallService
+@inject FirewallRuleService FirewallRuleService
 
 @if (networkRule == null)
 {
@@ -25,14 +25,50 @@ else
     <div class="tab-content" id="nav-tabContent">
         <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
             <button class="btn btn-primary" @onclick="AddNetRule">Add Network Rule</button>
-            @foreach (string p in networkRule)
-            {
                 <div class="card">
                     <div class="card-body">
-                        <p>@p</p>
+                        <table class="table">
+                            <thead>
+                                <th>Rule Name</th>
+                                <th>Description</th>
+                                <th>Source</th>
+                                <th>Destination</th>
+                                <th>Service</th>
+                            </thead>
+                            <tbody>
+                                @foreach (FirewallRule p in networkRule)
+                                {
+                                    <tr>
+                                        <td>@p.name</td>
+                                        <td>@p.description</td>
+                                        <td>@foreach(FirewallObjectGroup group in p.sourceObjectGroups)
+                                            {
+                                                @group.name<br>
+                                            }
+                                            @foreach(FirewallObject firewallObj in p.sourceObjects)
+                                            {
+                                                @firewallObj.name<br>
+                                            }
+                                        </td>
+                                        <td>@foreach(FirewallObjectGroup group in p.destinationObjectGroups)
+                                            {
+                                                @group.name<br>
+                                            }
+                                            @foreach(FirewallObject firewallObj in p.destinationObjects)
+                                            {
+                                                @firewallObj.name<br>
+                                            }</td>
+                                        <td>@foreach(FirewallProtocol service in p.services)
+                                            {
+                                                @service.name<br>
+                                            }</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
                     </div>
                 </div>
-            }
+            
         </div>
         <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
             <button class="btn btn-primary" @onclick="AddAppRule">Add Application Rule</button>
@@ -46,7 +82,7 @@ else
             }
         </div>
         <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">
-            <button class="btn btn-primary" @onclick="AdddNatRule">Add Desination Nat Rule</button>            
+            <button class="btn btn-primary" @onclick="AdddNatRule">Add Desination Nat Rule</button>
             @foreach (string d in dnatRule)
             {
                 <div class="card">
@@ -61,7 +97,7 @@ else
 
 
 @code {
-    private List<string> networkRule;
+    private List<FirewallRule> networkRule;
     private List<string> appRule;
     private List<string> dnatRule;
     private int networkRulecount;
@@ -71,7 +107,7 @@ else
     protected override async Task OnInitializedAsync()
     {
         //string stringPolicy = await FirewallService.GetFirewallPolicy();
-        networkRule = new List<string>() { "First", "Second" }; //JObject.Parse(stringPolicy);
+        networkRule = new List<FirewallRule>() { new FirewallRule() { name="MyTestRule", services=new List<FirewallProtocol>() { new FirewallProtocol() {name="http", port=80}}, description="My Test Description", sourceObjects=new List<FirewallObject>(){new FirewallObject() {name="MyTestObject",network="10.244.0.1"}},destinationObjects=new List<FirewallObject>(){new FirewallObject(){name="Destination",network="10.0.0.0/24"}}, sourceObjectGroups=new List<FirewallObjectGroup>(),destinationObjectGroups=new List<FirewallObjectGroup>()}}; //JObject.Parse(stringPolicy);
         appRule = new List<string>() { "App1", "App2" }; //JObject.Parse(stringPolicy);
         dnatRule = new List<string>() { "dnat1", "dnat2" }; //JObject.Parse(stringPolicy);
 
@@ -80,7 +116,7 @@ else
 
     private void AddNetRule()
     {
-        networkRule.Add("Another" + networkRulecount.ToString());
+        //networkRule.Add("Another" + networkRulecount.ToString());
         networkRulecount++;
         StateHasChanged();
     }
