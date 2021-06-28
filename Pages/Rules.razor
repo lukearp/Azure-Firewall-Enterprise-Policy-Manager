@@ -116,7 +116,7 @@ else
 
     private void AddNetRule()
     {
-        //networkRule.Add("Another" + networkRulecount.ToString());
+        networkRule.Add(new FirewallRule() { name=networkRulecount.ToString() + "-MyTestRule", services=new List<FirewallProtocol>() { new FirewallProtocol() {name="http", port=80}}, description="My Test Description " + networkRulecount.ToString(), sourceObjects=new List<FirewallObject>(){new FirewallObject() {name="MyTestObject",network="10.244.0." + networkRulecount.ToString()}},destinationObjects=new List<FirewallObject>(){new FirewallObject(){name="Destination",network="10.0.0." + networkRulecount.ToString() + "/24"}}, sourceObjectGroups=new List<FirewallObjectGroup>(),destinationObjectGroups=new List<FirewallObjectGroup>()});
         networkRulecount++;
         StateHasChanged();
     }
