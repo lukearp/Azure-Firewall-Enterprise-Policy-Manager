@@ -39,7 +39,7 @@ else
                                 @foreach (FirewallRule p in networkRule)
                                 {
                                     <tr>
-                                        <td>@p.name</td>
+                                        <td @onmouseover="ShowSomething" @onmouseout="DontShow">@p.name @message</td>
                                         <td>@p.description</td>
                                         <td>@foreach(FirewallObjectGroup group in p.sourceObjectGroups)
                                             {
@@ -103,6 +103,7 @@ else
     private int networkRulecount;
     private int appRulecount;
     private int dNatRulecount;
+    private string message;
 
     protected override async Task OnInitializedAsync()
     {
@@ -131,5 +132,13 @@ else
         dnatRule.Add("Nat" + dNatRulecount.ToString());
         dNatRulecount++;
         StateHasChanged();
+    }
+    private void ShowSomething(MouseEventArgs e)
+    {
+        message = "My Test";
+    }
+    private void DontShow(MouseEventArgs e)
+    {
+        message = "";
     }
 }
