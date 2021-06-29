@@ -1,7 +1,6 @@
 @page "/rules"
 
 @using Azure_Firewall_Enterprise_Policy_Manager.Data
-@using Newtonsoft.Json.Linq
 @using System.Collections.Generic
 @inject FirewallRuleService FirewallRuleService
 
@@ -39,28 +38,28 @@ else
                                 @foreach (FirewallRule p in networkRule)
                                 {
                                     <tr>
-                                        <td @onmouseover="ShowSomething" @onmouseout="DontShow">@p.name @message</td>
+                                        <td>@p.name</td>
                                         <td>@p.description</td>
                                         <td>@foreach(FirewallObjectGroup group in p.sourceObjectGroups)
                                             {
-                                                @group.name<br>
+                                                <p data-toggle="tooltip" data-placement="bottom" title="@String.Join(", ",@group.firewallObjects.Select(x => x.network).ToArray())">@group.name</p><br>
                                             }
                                             @foreach(FirewallObject firewallObj in p.sourceObjects)
                                             {
-                                                @firewallObj.name<br>
+                                                <p data-toggle="tooltip" data-placement="bottom" title="@firewallObj.network">@firewallObj.name</p><br>
                                             }
                                         </td>
                                         <td>@foreach(FirewallObjectGroup group in p.destinationObjectGroups)
                                             {
-                                                @group.name<br>
+                                                <p data-toggle="tooltip" data-placement="bottom" title="@String.Join(", ",@group.firewallObjects.Select(x => x.network).ToArray())">@group.name</p><br>
                                             }
                                             @foreach(FirewallObject firewallObj in p.destinationObjects)
                                             {
-                                                @firewallObj.name<br>
+                                                <p data-toggle="tooltip" data-placement="bottom" title="@firewallObj.network">@firewallObj.name</p><br>
                                             }</td>
                                         <td>@foreach(FirewallProtocol service in p.services)
                                             {
-                                                @service.name<br>
+                                                <p data-toggle="tooltip" data-placement="bottom" title="@service.port">@service.name</p><br>
                                             }</td>
                                     </tr>
                                 }
@@ -117,7 +116,7 @@ else
 
     private void AddNetRule()
     {
-        networkRule.Add(new FirewallRule() { name=networkRulecount.ToString() + "-MyTestRule", services=new List<FirewallProtocol>() { new FirewallProtocol() {name="http", port=80}}, description="My Test Description " + networkRulecount.ToString(), sourceObjects=new List<FirewallObject>(){new FirewallObject() {name="MyTestObject",network="10.244.0." + networkRulecount.ToString()}},destinationObjects=new List<FirewallObject>(){new FirewallObject(){name="Destination",network="10.0.0." + networkRulecount.ToString() + "/24"}}, sourceObjectGroups=new List<FirewallObjectGroup>(),destinationObjectGroups=new List<FirewallObjectGroup>()});
+        networkRule.Add(new FirewallRule() { name=networkRulecount.ToString() + "-MyTestRule", services=new List<FirewallProtocol>() { new FirewallProtocol() {name="http", port=80}, new FirewallProtocol() {name="http", port=443}}, description="My Test Description " + networkRulecount.ToString(), sourceObjects=new List<FirewallObject>(){new FirewallObject() {name="MyTestObject",network="10.244.0." + networkRulecount.ToString()}},destinationObjects=new List<FirewallObject>(){new FirewallObject(){name="Destination",network="10.0.0." + networkRulecount.ToString() + "/24"}}, sourceObjectGroups=new List<FirewallObjectGroup>() {new FirewallObjectGroup() {name="NewGroup", firewallObjects = new List<FirewallObject>() {new FirewallObject(){name="NewSource",network="10.0.0." + networkRulecount.ToString() + "/24"}}, description="MyGroup-Baby", references=new FirewallObjectReference()}},destinationObjectGroups=new List<FirewallObjectGroup>() {new FirewallObjectGroup() {name="DestGroup", firewallObjects = new List<FirewallObject>() {new FirewallObject(){name="Dest1",network="10.5.0." + networkRulecount.ToString() + "/24"},new FirewallObject(){name="Dest2",network="10.6.0." + networkRulecount.ToString() + "/24"}}, description="MyGroup-Baby", references=new FirewallObjectReference()}}});
         networkRulecount++;
         StateHasChanged();
     }
@@ -132,13 +131,5 @@ else
         dnatRule.Add("Nat" + dNatRulecount.ToString());
         dNatRulecount++;
         StateHasChanged();
-    }
-    private void ShowSomething(MouseEventArgs e)
-    {
-        message = "My Test";
-    }
-    private void DontShow(MouseEventArgs e)
-    {
-        message = "";
-    }
+    }    
 }
