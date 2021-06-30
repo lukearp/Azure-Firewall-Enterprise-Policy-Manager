@@ -24,6 +24,11 @@ else
     <div class="tab-content" id="nav-tabContent">
         <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
             <button class="btn btn-primary" @onclick="AddNetRule">Add Network Rule</button>
+            <button class="btn btn-secondary" @onclick="TestForm">Test Form</button>
+            <form>
+                <label hidden=@modalHidden>Test</label>
+                <input type="text" hidden=@modalHidden>
+            </form>
                 <div class="card">
                     <div class="card-body">
                         <table class="table">
@@ -94,7 +99,6 @@ else
     </div>
 }
 
-
 @code {
     private List<FirewallRule> networkRule;
     private List<string> appRule;
@@ -103,6 +107,7 @@ else
     private int appRulecount;
     private int dNatRulecount;
     private string message;
+    private bool modalHidden = true;
 
     protected override async Task OnInitializedAsync()
     {
@@ -131,5 +136,9 @@ else
         dnatRule.Add("Nat" + dNatRulecount.ToString());
         dNatRulecount++;
         StateHasChanged();
-    }    
+    }   
+    private void TestForm()
+    {
+        modalHidden = false;
+    }
 }
